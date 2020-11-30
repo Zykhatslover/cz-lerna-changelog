@@ -8,6 +8,7 @@ const { getPackages } = require("@lerna/project");
 
 import makeDefaultQuestions from './make-default-questions';
 import autocompleteQuestions from './autocomplete-questions';
+import { getDefaultScope, scopes } from './get-scopes';
 
 const commitAnalyzer = (props, commits, then) => analyzeCommits(props, commits)
   .then((result) => then(null, result))
@@ -71,7 +72,9 @@ function makePrompter(makeCustomQuestions = () => []) {
       const allPackages = pkgs.map(pkg => pkg.name);
       const changedPackages = getChangedPackages(pkgs);
 
-      const defaultQuestions = makeDefaultQuestions(allPackages, changedPackages);
+      const defaultScope = getDefaultScope();
+
+      const defaultQuestions = makeDefaultQuestions({ allPackages, changedPackages, allScopes: scopes, defaultScope });
       const customQuestions = makeCustomQuestions(allPackages, changedPackages);
       const questions = mergeQuestions(defaultQuestions, customQuestions);
 

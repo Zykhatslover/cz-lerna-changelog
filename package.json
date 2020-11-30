@@ -37,7 +37,7 @@
     "babel-register": "^6.26.0",
     "commitizen": "^2.9.5",
     "cz-conventional-changelog": "^1.2.0",
-    "inquirer": "^3.0.4",
+    "inquirer": "^7.3.3",
     "lerna": "^3.22.1",
     "mocha": "^8.2.1",
     "semantic-release": "^4.3.5"
