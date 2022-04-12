@@ -1,1 +1,4 @@
-**/*
+.yarn
+.history
+.vscode
+lib

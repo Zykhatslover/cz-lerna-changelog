@@ -1,20 +1,20 @@
-import { existsSync } from "fs";
-import { join, normalize } from "path";
-import shell from "shelljs";
+import { existsSync } from 'fs';
+import { join, normalize } from 'path';
+import shell from 'shelljs';
 
 const root = process.cwd();
 
-const COMMITLINT_FILE_NAME = "commitlint.config.js";
+const COMMITLINT_FILE_NAME = 'commitlint.config.js';
 
 const possibleLocations = [
   join(root, COMMITLINT_FILE_NAME),
-  join(root, "..", COMMITLINT_FILE_NAME),
-  join(root, "..", "..", COMMITLINT_FILE_NAME),
+  join(root, '..', COMMITLINT_FILE_NAME),
+  join(root, '..', '..', COMMITLINT_FILE_NAME),
 ];
 
 const commitLintFile = possibleLocations.reduce(
   (acc, path) => (existsSync(path) ? path : acc),
-  null
+  null,
 );
 
 /**
@@ -42,14 +42,14 @@ const featFolderPattern = /\/src\/([a-zA-Z0-9]+)\//;
  */
 const getDefaultScope = () => {
   const changedFiles = shell
-    .exec("git diff --cached --name-only", { silent: true })
-    .stdout.split("\n")
+    .exec('git diff --cached --name-only', { silent: true })
+    .stdout.split('\n')
     .map(normalize);
 
   const folders = changedFiles
     .map((path) => {
       const matches = featFolderPattern.exec(path);
-      return (!!matches && matches[1]) || "";
+      return (!!matches && matches[1]) || '';
     })
     .map((path) => path.toLowerCase());
 
@@ -70,7 +70,7 @@ const getDefaultScope = () => {
         ? feature
         : acc;
     },
-    ""
+    '',
   );
 
   return mostUsedFeature;

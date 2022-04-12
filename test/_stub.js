@@ -8,6 +8,5 @@ export default function stub(obj, method, fn) {
   const prev = obj[method];
   obj[method] = fn;
   fn.__stubbed__ = true;
-  stubs.push(() => obj[method] = prev);
+  stubs.push(() => (obj[method] = prev));
 }
-

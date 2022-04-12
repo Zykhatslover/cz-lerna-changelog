@@ -4,24 +4,25 @@ import { analyzeCommits } from '@semantic-release/commit-analyzer';
 import chalk from 'chalk';
 import buildCommit from 'cz-customizable/buildCommit';
 import autocomplete from 'inquirer-autocomplete-prompt';
-const { getPackages } = require("@lerna/project");
+const { getPackages } = require('@lerna/project');
 
 import makeDefaultQuestions from './make-default-questions';
 import autocompleteQuestions from './autocomplete-questions';
 import { getDefaultScope, scopes } from './get-scopes';
 
-const commitAnalyzer = (props, commits, then) => analyzeCommits(props, commits)
-  .then((result) => then(null, result))
-  .catch(then)
+const commitAnalyzer = (props, commits, then) =>
+  analyzeCommits(props, commits)
+    .then((result) => then(null, result))
+    .catch(then);
 
 function getAllPackages() {
   return getPackages();
 }
 
 function getChangedPackages(allPackages) {
-  const changedFiles = shell.exec('git diff --cached --name-only', { silent: true })
-    .stdout
-    .split('\n')
+  const changedFiles = shell
+    .exec('git diff --cached --name-only', { silent: true })
+    .stdout.split('\n')
     .map(path.normalize);
 
   return allPackages
@@ -34,7 +35,7 @@ function getChangedPackages(allPackages) {
       }
     })
     .map(function (pkg) {
-      return pkg.name
+      return pkg.name;
     });
 }
 
@@ -47,7 +48,7 @@ function makeAffectsLine(answers) {
 
 function getCommitTypeMessage(type) {
   if (!type) {
-    return 'This commit does not indicate any release'
+    return 'This commit does not indicate any release';
   }
   return {
     patch: '🛠  This commit indicates a patch release (0.0.X)',
@@ -58,9 +59,12 @@ function getCommitTypeMessage(type) {
 
 function mergeQuestions(defaultQuestions, customQuestions) {
   const questions = [];
-  defaultQuestions.forEach(question => {
-    const matchingCustomQuestions = customQuestions.filter(({ name: customQuestionName }) => (customQuestionName === question.name));
-    const customQuestion = matchingCustomQuestions.length > 0 && matchingCustomQuestions[0]
+  defaultQuestions.forEach((question) => {
+    const matchingCustomQuestions = customQuestions.filter(
+      ({ name: customQuestionName }) => customQuestionName === question.name,
+    );
+    const customQuestion =
+      matchingCustomQuestions.length > 0 && matchingCustomQuestions[0];
     questions.push(customQuestion || question);
   });
   return questions;
@@ -68,41 +72,52 @@ function mergeQuestions(defaultQuestions, customQuestions) {
 
 function makePrompter(makeCustomQuestions = () => []) {
   return function (cz, commit) {
-    getAllPackages().then(pkgs => {
-      const allPackages = pkgs.map(pkg => pkg.name);
+    getAllPackages().then((pkgs) => {
+      const allPackages = pkgs.map((pkg) => pkg.name);
       const changedPackages = getChangedPackages(pkgs);
 
       const defaultScope = getDefaultScope();
 
-      const defaultQuestions = makeDefaultQuestions({ allPackages, changedPackages, allScopes: scopes, defaultScope });
+      const defaultQuestions = makeDefaultQuestions({
+        allPackages,
+        changedPackages,
+        allScopes: scopes,
+        defaultScope,
+      });
       const customQuestions = makeCustomQuestions(allPackages, changedPackages);
       const questions = mergeQuestions(defaultQuestions, customQuestions);
 
-      console.log('\n\nLine 1 will be cropped at 100 characters. All other lines will be wrapped after 100 characters.\n');
+      console.log(
+        '\n\nLine 1 will be cropped at 100 characters. All other lines will be wrapped after 100 characters.\n',
+      );
 
       cz.registerPrompt('autocomplete', autocomplete);
-      cz.prompt(
-        autocompleteQuestions(questions)
-      ).then((answers) => {
+      cz.prompt(autocompleteQuestions(questions)).then((answers) => {
         const affectsLine = makeAffectsLine(answers);
         if (affectsLine) {
           answers.body = `${affectsLine}\n` + answers.body;
         }
         const message = buildCommit(answers);
-        const type = commitAnalyzer({}, {
-          commits: [{
-            hash: '',
-            message,
-          }],
-        }, (err, type) => {
-          console.log(chalk.green(`\n${getCommitTypeMessage(type)}\n`));
-          console.log('\n\nCommit message:');
-          console.log(chalk.blue(`\n\n${message}\n`));
-          commit(message)
-        });
+        const type = commitAnalyzer(
+          {},
+          {
+            commits: [
+              {
+                hash: '',
+                message,
+              },
+            ],
+          },
+          (err, type) => {
+            console.log(chalk.green(`\n${getCommitTypeMessage(type)}\n`));
+            console.log('\n\nCommit message:');
+            console.log(chalk.blue(`\n\n${message}\n`));
+            commit(message);
+          },
+        );
       });
-    })
-  }
+    });
+  };
 }
 
 module.exports = {
