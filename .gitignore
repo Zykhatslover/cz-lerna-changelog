@@ -28,3 +28,12 @@ node_modules
 
 .idea
 .history
+
+
+# Yarn
+.yarn/*
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+.pnp.*
