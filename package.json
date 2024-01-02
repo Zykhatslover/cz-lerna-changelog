@@ -21,10 +21,10 @@
   "author": "Joshua Nelson <jonelson@atlassian.com>, Joscha Feth <jfeth@atlassian.com>",
   "license": "MIT",
   "dependencies": {
-    "inquirer": "^8.2.2",
     "@semantic-release/commit-analyzer": "^6.3.3",
     "chalk": "^1.1.3",
     "cz-customizable": "^4.0.0",
+    "inquirer": "^8.2.2",
     "inquirer-autocomplete-prompt": "^2.0.0",
     "promise": "^8.1.0",
     "semantic-release": "^15.14.0",
